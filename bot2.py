@@ -31,9 +31,6 @@ registration_kb = types.ReplyKeyboardMarkup(True)
 registration_btn = types.KeyboardButton("Реєстрація🎫")
 registration_kb.add(registration_btn)
 
-phone_kb = types.ReplyKeyboardMarkup(True)
-phone_btn = types.KeyboardButton("Надіслати номер телефона📱", request_contact=True)
-phone_kb.add(phone_btn)
 
 
 
@@ -91,8 +88,7 @@ def process_email(message):
 
         bot.send_message(
             message.chat.id,
-            'Пошту прийнято! Ведіть номер телефону: ',
-            reply_markup=phone_kb)
+            'Пошту прийнято! Ведіть номер телефону: ')
         
     else:
         bot.send_message(
@@ -101,15 +97,12 @@ def process_email(message):
 
 @bot.message_handler(state=RegistrationStates.waiting_for_phone, content_types=['contact', 'text'])
 def process_phone(message): 
-    phone = ''
     phone_pattern = r'^\+?[\d\s\-]{10,15}$'
     
-    if message.contact:
-        phone = message.contact.phone_number
-    elif message.text and re.match(phone_pattern, message.text):
+    if re.match(phone_pattern, message.text):
         phone = message.text
     else:
-        bot.send_message(message.chat.id, "Невірний формат номеру!")
+        bot.send_message(message.chat.id, "Невірний формат номеру! Використовуйте лише цифри.")
         return
     
     with open('emails.txt', 'a') as f:
